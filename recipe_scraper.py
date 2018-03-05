@@ -27,7 +27,6 @@ def scrape_ingredients(recipe_url):
 		ingredient_list.append(text)
 	return ingredient_list
 
-
 def scrape_instructions(recipe_url):
 	my_url = recipe_url
 	
