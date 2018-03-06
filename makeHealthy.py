@@ -5,7 +5,7 @@ from fractions import Fraction
 ingredients = scrape_ingredients('https://www.allrecipes.com/recipe/23600/worlds-best-lasagna/?internalSource=streams&referringId=95&referringContentType=recipe%20hub&clickId=st_recipes_mades')
 recipe = scrape_instructions('https://www.allrecipes.com/recipe/23600/worlds-best-lasagna/?internalSource=streams&referringId=95&referringContentType=recipe%20hub&clickId=st_recipes_mades')
 
-#print(ingredients)
+print(ingredients)
 #print(recipe)
 
 fats = [
@@ -23,7 +23,10 @@ fats = [
 	['bun', 'lettuce wrap'],
 	['french fries', 'sweet potato fries'],
 	['butter', 'olive oil'],
-	['flour', 'whole wheat flour']
+	['flour', 'whole wheat flour'],
+	['bacon', 'canadian bacon'],
+	['sausage', 'lean ham'],
+	['eggs', 'egg substitutes'], # unless baking
 
 ]
 
@@ -45,9 +48,7 @@ carbs = [
 
 ]
 
-# example recipe that contains some of the words
-#recipe = 'Take the whole milk and eat some salted bread'
-# should be transformed into 'Take the milk and eat some unsalted whole wheat bread'
+
 
 # this will need to be changed based on how we define the recipe, 
 # but the basic logic should remain the same
@@ -66,7 +67,7 @@ def makeHealthyIngredients( ingredients ):
 					ingredient = ingredient.replace(word, carb[1])
 					ingredients[n] = ingredient
 
-	#reduceProportions(recipe)
+	reduceProportions(ingredients)
 	print(ingredients)
 
 def makeHealthyRecipe( recipe ):
@@ -80,7 +81,7 @@ def makeHealthyRecipe( recipe ):
 			if carb[0] in word:
 				recipe = recipe.replace(word, carb[1])
 
-	print(recipe)
+	#print(recipe)
 
 def reduceProportions( ingredients ):
 	for x, ingredient in enumerate(ingredients):
@@ -90,7 +91,6 @@ def reduceProportions( ingredients ):
 				if y == 0:
 					ingredient = ingredient.replace(word, str(new_amt))
 					ingredients[x] = ingredient
-	print(ingredients)
+	#print(ingredients)
 
 makeHealthyIngredients(ingredients)
-reduceProportions(ingredients)
