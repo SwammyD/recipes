@@ -93,4 +93,30 @@ def reduceProportions( ingredients ):
 					ingredients[x] = ingredient
 	#print(ingredients)
 
+def makeUnhealthyIngredients( ingredients ):
+	for fat in fats:
+		for n, ingredient in enumerate(ingredients):
+			for word in ingredient.split():
+				if fat[1] in word:
+					ingredient = ingredient.replace(word, fat[0])
+					ingredients[n] = ingredient
+
+	for carb in carbs:
+		for n, ingredient in enumerate(ingredients):
+			for word in ingredient.split():
+				if carb[1] in word:
+					ingredient = ingredient.replace(word, carb[0])
+					ingredients[n] = ingredient
+
+def makeUnhealthyRecipe( recipe ):
+	for fat in fats:
+		for word in recipe.split():
+			if fat[1] in word:
+				recipe = recipe.replace(word, fat[0])
+
+	for carb in carbs:
+		for word in recipe.split():
+			if carb[1] in word:
+				recipe = recipe.replace(word, carb[0])
+
 makeHealthyIngredients(ingredients)
