@@ -7,11 +7,22 @@ from stanfordcorenlp import StanfordCoreNLP
 
 java_path = "C:/Program Files/Java/jdk1.8.0_151/bin/java.exe"
 os.environ['JAVAHOME'] = java_path
+#nlp = StanfordCoreNLP(r'C:\StanfordPOS\stanford-corenlp-full-2018-02-27')
 
-url = 'https://www.allrecipes.com/recipe/34942/cheesy-italian-tortellini/'
 
-ingredients_list = recipe_scraper.scrape_ingredients(url)
-recipe_list = recipe_scraper.scrape_instructions(url)
+urls = [
+	['https://www.allrecipes.com/recipe/21340/lindas-lasagna/?internalSource=hub%20recipe&referringContentType=search%20results&clickId=cardslot%202'],
+	['https://www.allrecipes.com/recipe/223042/chicken-parmesan/?internalSource=streams&referringId=201&referringContentType=recipe%20hub&clickId=st_recipes_mades'],
+	['https://www.allrecipes.com/recipe/231523/pork-lo-mein/?internalSource=staff%20pick&referringId=1014&referringContentType=recipe%20hub'],
+	['https://www.allrecipes.com/recipe/255259/homemade-chili/?internalSource=staff%20pick&referringId=92&referringContentType=recipe%20hub'],
+	['https://www.allrecipes.com/recipe/231523/pork-lo-mein/?clickId=right%20rail1&internalSource=rr_feed_recipe_sb&referringId=255259%20referringContentType%3Drecipe'],
+	['https://www.allrecipes.com/recipe/14685/slow-cooker-beef-stew-i/?internalSource=hub%20recipe&referringId=200&referringContentType=recipe%20hub']
+]
+
+my_url = urls[1][0]
+ingredients_list = recipe_scraper.scrape_ingredients(my_url)
+recipe_list = recipe_scraper.scrape_instructions(my_url)
+
 
 
 substitutions = {
@@ -32,8 +43,33 @@ substitutions = {
 	'bow tie pasta': 'basmati rice',
 	'minced fresh parsley': 'cilantro',
 	'Italian sausage': 'turkey sausage',
-	'shredded cheddar cheese': 'paneer'
+	'lean ground beef': 'lean ground turkey',
+	'dried oregano': 'dried cumin',
+	'chopped fresh basil': 'chopped fresh cilantro'
+	#'shredded cheddar cheese': 'paneer'
 }
+
+methods = {
+	'drain': 'boiling',
+	'bake': 'baking',
+	'baking': 'baking',
+	'simmer': 'simmering',
+	'simmering': 'simmering',
+	'bring': 'boiling',
+	'caramelize': 'caramelizing',
+	'whisk': 'beating',
+	'blend': 'blending'
+}
+
+descriptors = [
+	'chopped',
+	'minced',
+	'cut',
+	'or',
+	'sliced',
+	'rinsed',
+	'diced'
+]
 
 
 def makeSouthAsian(ingredients, recipe):
@@ -53,39 +89,77 @@ def makeSouthAsian(ingredients, recipe):
 					if n > len(swaps[item].split()):
 						step = re.sub(item.split()[n], swaps[item], step)
 					else:
-						step = re.sub(item.split()[n], swaps[item], step)
+						step = re.sub(item.split()[n], swaps[item].split()[n], step)
 		new_recipe.append(step)
 	print(recipe)
 	print('\n')
 	print(new_recipe)
 
-	# for spice in spices:
-	# 	for n, ingredient in enumerate(ingredients):
-	# 		if spice[0] in ingredient:
-	# 			m = re.sub(spice[0], spice[1], ingredient)
-	# 			ingredients[n] = m
-						
-
 	return ingredients
 
+
 def getIngredient(ingredients):
-	extracted_ingredients = [];
+	parsed_ingredients = []
+	ingredient = []
+	for words in ingredients:
+		food = ''
+		quantity = []
+		measurement = []
+		words_list = words.split()
+		for word in words_list:
+		    if re.search('[1-9]', word) or re.search('[1-9]\/[1-9]', word) or re.search('\([1-9]+ [a-z]+\)', word):
+		        quantity.append(word)
+		    elif word in ['teaspoon', 'teaspoons', 'cup', 'cups', 'ounce', 'ounces', 'clove', 'pound', 'tablespoons', 'container', 'package', 'tablespoon', 'bunch', 'can', 'cans', 'pounds']:
+		        measurement.append(word)
+		    elif ')' not in word:
+		        food = food + ' ' +  word
+		ingredient.append(food)
 
-	for n, ingredient in enumerate(ingredients):
-		token = word_tokenize(ingredient)
-		if ',' in token:
-			comma_index = token.index(',')
-			current_ingredient = ' '.join(token[2:comma_index])
-		elif len(token) < 3:
-			curr_ingredient = ingredient
-		elif token[1] == '(':
-			current_ingredient = ' '.join(token[6:])
+
+	matches = []
+	for item in ingredient:
+		#print(item)
+		m = re.findall(r"((\w+ ?-?)+)", item)
+		matches.append([x[0] for x in m])
+	#print(matches)
+
+	for part in matches:
+		if len(part) > 1:
+			ingr = ''
+			found = False
+			for descriptor in descriptors:
+				if descriptor in part[1]:
+					found = True
+			if not found: 
+				ingr = part[1]
+				parsed_ingredients.append(ingr)
+			else:
+				ingr = part[0]
+				parsed_ingredients.append(ingr)
 		else:
-			current_ingredient =' '.join(token[2:])
+			ingr = part[0]
+			parsed_ingredients.append(ingr)
 
-		extracted_ingredients.append(current_ingredient)
 
-	return extracted_ingredients
+	return parsed_ingredients
+
+
+
+def extractMethods(recipe):
+	methods_list = []
+
+	for step in recipe:
+		tagged_text = nlp.pos_tag(step)
+		for item in tagged_text:
+			if item[1][0] == 'V':
+				lowercase_item = item[0].lower()
+				if lowercase_item in methods:
+					methods_list.append(methods[lowercase_item])
+
+	return methods_list
+
+
+#print(extractMethods(recipe_list))
 
 
 
@@ -95,24 +169,7 @@ print(makeSouthAsian(extracted_ingredients, recipe_list))
 
 
 
-
-
-
-
-
-# nlp = StanfordCoreNLP(r'C:\StanfordPOS\stanford-corenlp-full-2018-02-27')
-# text = recipe_list[2]
-# print(nlp.pos_tag(text))
-
-
-
-
-
-
-
-
-
-# depreciated version of Stanford POS tagger - might be useful
+#depreciated version of Stanford POS tagger - might be useful
 
 # stanford_classifier = 'C:\StanfordPOS\stanford-postagger-2018-02-27\models\english-bidirectional-distsim.tagger'
 # stanford_ner_path = 'C:\StanfordPOS\stanford-postagger-2018-02-27\stanford-postagger.jar'
