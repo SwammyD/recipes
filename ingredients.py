@@ -29,25 +29,37 @@ def ingredients_data(start_url):
         data.append([soup.title.string, link, ingredients])
     return data
 
+def getIngredientComponents(data):
+    ingredients = []
+
+    for i in data:
+        for words in i[2]:
+            food = ''
+            quantity = []
+            measurement = []
+            ingredient = []
+
+            if re.search('\(', words):
+                print(words)
+                # get rid of trademark
+                words = re.sub('\(R\)', '', words)
+                # get rid of other parentheses
+                words = re.sub(r'\s\([^)]*\)', '', words)
+                print(words)
+
+            words_list = words.split()
+            for word in words_list:
+                # if there are parentheses in the word, delete them
+                if re.search('[1-9]', word) or re.search('[1-9]\/[1-9]', word) or re.search('\([1-9]+ [a-z]+\)', word):
+                    quantity.append(word)
+                elif word in ['teaspoon', 'teaspons', 'cup', 'cups', 'pound', 'tablespoons']:
+                    measurement.append(word)
+                else:
+                    food = food + ' ' +  word
+            ingredient.append(food)
+            ingredients.append((quantity, measurement, ingredient))
+
+    return ingredients
+
 data = ingredients_data("https://www.allrecipes.com/recipes/")
-
-for i in data:
-    print(i)
-    for words in i[2]:
-        food = ''
-        quantity = []
-        measurement = []
-        ingredient = []
-        words_list = words.split()
-        for word in words_list:
-            if re.search('[1-9]', word) or re.search('[1-9]\/[1-9]', word) or re.search('\([1-9]+ [a-z]+\)', word):
-                quantity.append(word)
-            elif word in ['teaspoon', 'teaspons', 'cup', 'cups', 'pound', 'tablespoons']:
-                measurement.append(word)
-            else:
-                food = food + ' ' +  word
-        ingredient.append(food)
-        print(quantity, measurement, ingredient)
-
-
-
+print(getIngredientComponents(data))
