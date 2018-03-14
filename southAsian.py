@@ -7,7 +7,7 @@ from stanfordcorenlp import StanfordCoreNLP
 
 java_path = "C:/Program Files/Java/jdk1.8.0_151/bin/java.exe"
 os.environ['JAVAHOME'] = java_path
-#nlp = StanfordCoreNLP(r'C:\StanfordPOS\stanford-corenlp-full-2018-02-27')
+nlp = StanfordCoreNLP(r'C:\StanfordPOS\stanford-corenlp-full-2018-02-27')
 
 
 urls = [
@@ -19,7 +19,7 @@ urls = [
 	['https://www.allrecipes.com/recipe/14685/slow-cooker-beef-stew-i/?internalSource=hub%20recipe&referringId=200&referringContentType=recipe%20hub']
 ]
 
-my_url = urls[1][0]
+my_url = urls[4][0]
 ingredients_list = recipe_scraper.scrape_ingredients(my_url)
 recipe_list = recipe_scraper.scrape_instructions(my_url)
 
@@ -39,14 +39,14 @@ substitutions = {
 	'pork loin': 'lamb loin',
 	'pork loin roast': 'lamb loin roast',
 	'soy sauce': 'chili sauce',
-	'Parmesan cheese': 'paneer',
 	'bow tie pasta': 'basmati rice',
 	'minced fresh parsley': 'cilantro',
 	'Italian sausage': 'turkey sausage',
 	'lean ground beef': 'lean ground turkey',
 	'dried oregano': 'dried cumin',
-	'chopped fresh basil': 'chopped fresh cilantro'
-	#'shredded cheddar cheese': 'paneer'
+	'chopped fresh basil': 'chopped fresh cilantro',
+	'low-sodium soy sauce': 'chili sauce',
+	'linguine': 'rice'
 }
 
 methods = {
@@ -74,28 +74,45 @@ descriptors = [
 
 def makeSouthAsian(ingredients, recipe):
 	swaps = {}
-	new_recipe = []
-	# in theory this should work once we parse exact ingredients
+	new_recipe = recipe
+
 	for n, ingredient in enumerate(ingredients):
 		ingredient = ingredient.lower()
 		if ingredient in substitutions:
 			ingredients[n] = substitutions[ingredient]
 			swaps[ingredient] = substitutions[ingredient]
 
-	for step in recipe:
+	for n, step in enumerate(new_recipe):
 		for item in swaps:
-			for n, part in enumerate(item.split()):
-				if part in step:
-					if n > len(swaps[item].split()):
-						step = re.sub(item.split()[n], swaps[item], step)
-					else:
-						step = re.sub(item.split()[n], swaps[item].split()[n], step)
-		new_recipe.append(step)
-	print(recipe)
-	print('\n')
-	print(new_recipe)
+			split_item = item.split()
+			if len(split_item) > 1:
+				without_first = ' '.join(split_item[1:])
+			last_word = split_item[-1]
+			first_word = split_item[0]
 
-	return ingredients
+			# check if entire item is in step
+			re_obj = re.search(item, step)
+			if re_obj:
+				step = re.sub(item, swaps[item], step)
+
+			# check if all but first word is in step
+			elif re.search(without_first, step):
+				step = re.sub(without_first, swaps[item], step)
+
+			# check if last word is in step
+			elif re.search(last_word, step):
+				step = re.sub(last_word, swaps[item], step)
+
+			elif (len(split_item) < 3):
+				if re.search(first_word, step):
+					step = re.sub(first_word, swaps[item].split()[0], step)
+
+
+		new_recipe[n] = step
+
+	# print(new_recipe)
+
+	return ingredients, new_recipe
 
 
 def getIngredient(ingredients):
@@ -159,13 +176,13 @@ def extractMethods(recipe):
 	return methods_list
 
 
-#print(extractMethods(recipe_list))
+print(extractMethods(recipe_list))
 
 
 
-extracted_ingredients = getIngredient(ingredients_list)
-#print(extracted_ingredients)
-print(makeSouthAsian(extracted_ingredients, recipe_list))
+# extracted_ingredients = getIngredient(ingredients_list)
+# #print(extracted_ingredients)
+# print(makeSouthAsian(extracted_ingredients, recipe_list))
 
 
 
