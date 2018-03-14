@@ -29,37 +29,31 @@ def ingredients_data(start_url):
         data.append([soup.title.string, link, ingredients])
     return data
 
-def getIngredientComponents(data):
-    ingredients = []
 
+
+def decompose_ingredient(start_url):
+    res = []
+    data = ingredients_data(start_url)
     for i in data:
+        print(i)
         for words in i[2]:
             food = ''
             quantity = []
             measurement = []
             ingredient = []
-
-            if re.search('\(', words):
-                print(words)
-                # get rid of trademark
-                words = re.sub('\(R\)', '', words)
-                # get rid of other parentheses
-                words = re.sub(r'\s\([^)]*\)', '', words)
-                print(words)
-
             words_list = words.split()
             for word in words_list:
-                # if there are parentheses in the word, delete them
                 if re.search('[1-9]', word) or re.search('[1-9]\/[1-9]', word) or re.search('\([1-9]+ [a-z]+\)', word):
                     quantity.append(word)
-                elif word in ['teaspoon', 'teaspons', 'cup', 'cups', 'pound', 'tablespoons']:
+                elif word in ['teaspoon', 'teaspoons', 'cup', 'cups', 'pound', 'tablespoon', 'tablespoons']:
                     measurement.append(word)
                 else:
                     food = food + ' ' +  word
             ingredient.append(food)
-            ingredients.append((quantity, measurement, ingredient))
+            res.append([quantity, measurement, ingredient])
+    return res
 
-    return ingredients
 
-data = ingredients_data("https://www.allrecipes.com/recipes/")
-print(getIngredientComponents(data))
+
+get_ingredient = decompose_ingredient('https://www.allrecipes.com/recipes/')
+print(get_ingredient)
