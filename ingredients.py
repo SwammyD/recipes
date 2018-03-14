@@ -29,25 +29,31 @@ def ingredients_data(start_url):
         data.append([soup.title.string, link, ingredients])
     return data
 
-data = ingredients_data("https://www.allrecipes.com/recipes/")
-
-for i in data:
-    print(i)
-    for words in i[2]:
-        food = ''
-        quantity = []
-        measurement = []
-        ingredient = []
-        words_list = words.split()
-        for word in words_list:
-            if re.search('[1-9]', word) or re.search('[1-9]\/[1-9]', word) or re.search('\([1-9]+ [a-z]+\)', word):
-                quantity.append(word)
-            elif word in ['teaspoon', 'teaspons', 'cup', 'cups', 'pound', 'tablespoons']:
-                measurement.append(word)
-            else:
-                food = food + ' ' +  word
-        ingredient.append(food)
-        print(quantity, measurement, ingredient)
 
 
+def decompose_ingredient(start_url):
+    res = []
+    data = ingredients_data(start_url)
+    for i in data:
+        res.append(i)
+        for words in i[2]:
+            food = ''
+            quantity = []
+            measurement = []
+            ingredient = []
+            words_list = words.split()
+            for word in words_list:
+                if re.search('[1-9]', word) or re.search('[1-9]\/[1-9]', word) or re.search('\([1-9]+ [a-z]+\)', word):
+                    quantity.append(word)
+                elif word in ['teaspoon', 'teaspoons', 'cup', 'cups', 'pound', 'tablespoon', 'tablespoons']:
+                    measurement.append(word)
+                else:
+                    food = food + ' ' +  word
+            ingredient.append(food)
+            res.append([quantity, measurement, ingredient])
+    return res
 
+
+
+get_ingredient = decompose_ingredient('https://www.allrecipes.com/recipes/')
+print(get_ingredient)
