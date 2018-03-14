@@ -129,50 +129,7 @@ def makeSouthAsian(ingredients, recipe):
 	return ingredients, new_recipe
 
 
-def getIngredient(ingredients):
-	parsed_ingredients = []
-	ingredient = []
-	for words in ingredients:
-		food = ''
-		quantity = []
-		measurement = []
-		words_list = words.split()
-		for word in words_list:
-		    if re.search('[1-9]', word) or re.search('[1-9]\/[1-9]', word) or re.search('\([1-9]+ [a-z]+\)', word):
-		        quantity.append(word)
-		    elif word in ['teaspoon', 'teaspoons', 'cup', 'cups', 'ounce', 'ounces', 'clove', 'pound', 'tablespoons', 'container', 'package', 'tablespoon', 'bunch', 'can', 'cans', 'pounds']:
-		        measurement.append(word)
-		    elif ')' not in word:
-		        food = food + ' ' +  word
-		ingredient.append(food)
 
-
-	matches = []
-	for item in ingredient:
-		#print(item)
-		m = re.findall(r"((\w+ ?-?)+)", item)
-		matches.append([x[0] for x in m])
-	#print(matches)
-
-	for part in matches:
-		if len(part) > 1:
-			ingr = ''
-			found = False
-			for descriptor in descriptors:
-				if descriptor in part[1]:
-					found = True
-			if not found: 
-				ingr = part[1]
-				parsed_ingredients.append(ingr)
-			else:
-				ingr = part[0]
-				parsed_ingredients.append(ingr)
-		else:
-			ingr = part[0]
-			parsed_ingredients.append(ingr)
-
-
-	return parsed_ingredients
 
 
 
