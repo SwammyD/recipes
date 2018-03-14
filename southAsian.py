@@ -159,7 +159,7 @@ print(extractMethods(recipe_list))
 
 
 
-extracted_ingredients = getIngredient(ingredients_list)
+quantity, measurement, extracted_ingredients = recipe_scraper.getIngredient(ingredients_list)
 #print(extracted_ingredients)
 print(makeSouthAsian(extracted_ingredients, recipe_list))
 
