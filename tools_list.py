@@ -126,9 +126,10 @@ instructions = "Preheat oven to 350 degrees F (175 degrees C). Grease and flour 
 def makeToolsList( instructions ):
 	toolsList = []
 	for term in tools:
-			if  term[0] in instructions.lower():
-				if term[1] not in toolsList:
-					toolsList.append(term[1])
+			if  term[0] in instructions.lower() and term[1] not in toolsList:
+				toolsList.append(term[1])
+			if term[1] in instructions.lower() and term[1] not in toolsList:
+				toolsList.append(term[1])
 	if 'bowl' in toolsList and 'wooden spoon' not in toolsList:
 		toolsList.append('wooden spoon')
 	print(toolsList)
