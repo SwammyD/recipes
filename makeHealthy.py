@@ -1,11 +1,14 @@
 import nltk
 from recipe_scraper import *
 from fractions import Fraction
+from ingredients import *
 
-ingredients = scrape_ingredients('https://www.allrecipes.com/recipe/23600/worlds-best-lasagna/?internalSource=streams&referringId=95&referringContentType=recipe%20hub&clickId=st_recipes_mades')
+full_ingredients = scrape_ingredients('https://www.allrecipes.com/recipe/23600/worlds-best-lasagna/?internalSource=streams&referringId=95&referringContentType=recipe%20hub&clickId=st_recipes_mades')
 recipe = scrape_instructions('https://www.allrecipes.com/recipe/23600/worlds-best-lasagna/?internalSource=streams&referringId=95&referringContentType=recipe%20hub&clickId=st_recipes_mades')
 
-print(ingredients)
+quantity, measurement, ingredients = decompose_ingredient('https://www.allrecipes.com/recipe/13883/manicotti/?internalSource=rotd&referringId=95&referringContentType=recipe%20hub')
+print(len(quantity))
+print(len(ingredients))
 #print(recipe)
 
 fats = [
@@ -18,13 +21,14 @@ fats = [
 	['whipping cream', 'imitiation whipping cream'],
 	['sour cream', 'plain low-fat yogurt'],
 	['granola', 'bran flakes'],
+	['ground beef', 'lean ground beef'],
 	['beef', 'lean beef'],
-	['cheese', 'low-fat cheese'],
 	['bun', 'lettuce wrap'],
 	['french fries', 'sweet potato fries'],
 	['butter', 'olive oil'],
 	['flour', 'whole wheat flour'],
 	['bacon', 'canadian bacon'],
+	['ground sausage', 'ground turkey'],
 	['sausage', 'lean ham'],
 	['eggs', 'egg substitutes'], # unless baking
 
@@ -55,19 +59,20 @@ carbs = [
 def makeHealthyIngredients( ingredients ):
 	for fat in fats:
 		for n, ingredient in enumerate(ingredients):
-			for word in ingredient.split():
-				if fat[0] in word:
-					ingredient = ingredient.replace(word, fat[1])
-					ingredients[n] = ingredient
+			if 'cheese' in ingredient and 'low-fat' not in ingredient:
+				ingredient = 'low-fat' + ingredient
+				ingredients[n] = ingredient
+			elif fat[0] in ingredient and 'lean' not in ingredient:
+				ingredient = fat[1]
+				ingredients[n] = ingredient
 
 	for carb in carbs:
 		for n, ingredient in enumerate(ingredients):
-			for word in ingredient.split():
-				if carb[0] in word:
-					ingredient = ingredient.replace(word, carb[1])
-					ingredients[n] = ingredient
+			if carb[0] in ingredient:
+				ingredient = carb[1]
+				ingredients[n] = ingredient
 
-	reduceProportions(ingredients)
+	#reduceProportions(ingredients)
 	print(ingredients)
 
 def makeHealthyRecipe( recipe ):
@@ -96,17 +101,15 @@ def reduceProportions( ingredients ):
 def makeUnhealthyIngredients( ingredients ):
 	for fat in fats:
 		for n, ingredient in enumerate(ingredients):
-			for word in ingredient.split():
-				if fat[1] in word:
-					ingredient = ingredient.replace(word, fat[0])
-					ingredients[n] = ingredient
+			if fat[1] in word:
+				ingredient = fat[0]
+				ingredients[n] = ingredient
 
 	for carb in carbs:
 		for n, ingredient in enumerate(ingredients):
-			for word in ingredient.split():
-				if carb[1] in word:
-					ingredient = ingredient.replace(word, carb[0])
-					ingredients[n] = ingredient
+			if carb[1] in word:
+				ingredient = ingredient.replace(word, carb[0])
+				ingredients[n] = ingredient
 
 def makeUnhealthyRecipe( recipe ):
 	for fat in fats:
@@ -120,3 +123,4 @@ def makeUnhealthyRecipe( recipe ):
 				recipe = recipe.replace(word, carb[0])
 
 makeHealthyIngredients(ingredients)
+# quantities do not break down fractions properly
