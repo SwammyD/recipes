@@ -35,7 +35,7 @@ def decompose_ingredient(start_url):
     res = []
     data = ingredients_data(start_url)
     for i in data:
-        print(i)
+        res.append(i)
         for words in i[2]:
             food = ''
             quantity = []
