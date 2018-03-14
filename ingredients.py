@@ -32,19 +32,13 @@ def ingredients_data(start_url):
 
 
 def decompose_ingredient(start_url):
-    res = []
     food = ''
     quantity = []
     measurement = []
     ingredient = []
     data = ingredients_data(start_url)
     for i in data:
-        #res.append(i)
         for words in i[2]:
-            #food = ''
-            #quantity = []
-            #measurement = []
-            #ingredient = []
             words_list = words.split()
             for word in words_list:
                 if re.search('[1-9]', word) or re.search('[1-9]\/[1-9]', word) or re.search('\([1-9]+ [a-z]+\)', word):
@@ -55,7 +49,6 @@ def decompose_ingredient(start_url):
                     food = food + ' ' +  word
             ingredient.append(food)
             food = ''
-            #res.append([quantity, measurement, ingredient])
     return quantity, measurement, ingredient
 
 
