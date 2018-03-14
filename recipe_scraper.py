@@ -17,7 +17,7 @@ descriptors = [
 def scrape_ingredients(recipe_url):
 	# url of award show wiki page
 	my_url = recipe_url
-	
+
 
 	# grab webpage html
 	uClient = uReq(my_url)
@@ -40,7 +40,7 @@ def scrape_ingredients(recipe_url):
 
 def scrape_instructions(recipe_url):
 	my_url = recipe_url
-	
+
 
 	# grab webpage html
 	uClient = uReq(my_url)
@@ -63,58 +63,58 @@ def scrape_instructions(recipe_url):
 
 
 
-def getIngredient(ingredients):
-	parsed_ingredients = []
-	ingredient = []
-	quantity = []
-	measurement = []
+def get_ingredients_data(ingredients):
+
+	# a list of tuples, where the first item in the tuple is a list of the quantities, the second is a list of measurements, and the third is a string with the meaningful part of the food (everything else parsed out)
+	ingredients_data = []
 
 	for words in ingredients:
-		if re.search('\(', words):
-				# get rid of trademark
-				words = re.sub('\(R\)', '', words)
-				# get rid of other parentheses
-				words = re.sub(r'\s\([^)]*\)', '', words)
+		quantity = []
+		measurement = []
 		food = ''
+
+		# if parens are in the ingredient, delete them
+		if re.search('\(', words):
+			# get rid of trademark
+			words = re.sub('\(R\)', '', words)
+			# get rid of other parentheses
+			words = re.sub(r'\s\([^)]*\)', '', words)
+
 		words_list = words.split()
 		for word in words_list:
+			# if it's a quantity
 			if re.search('[1-9]', word) or re.search('[1-9]\/[1-9]', word) or re.search('\([1-9]+ [a-z]+\)', word):
 				quantity.append(word)
+			# if it's a measure
 			elif word in ['teaspoon', 'teaspoons', 'cup', 'cups', 'ounce', 'ounces', 'clove', 'pound', 'tablespoons', 'container', 'package', 'tablespoon', 'bunch', 'can', 'cans', 'pounds']:
 				measurement.append(word)
-			elif ')' not in word:
-				food = food + ' ' +  word
-		ingredient.append(food)
+			# otherwise it's part of food so create a string that has the entire food part of the ingredient
+			else:
+				food += ' ' + word
 
-	matches = []
-	for item in ingredient:
-		#print(item)
-		m = re.findall(r"((\w+ ?-?)+)", item)
-		matches.append([x[0] for x in m])
-	#print(matches)
+		# now we have a string of the food part of the ingredient. let's take out stuff we don't need
+		m = re.findall(r"((\w+ ?-?)+)", food)
+		match = [x[0] for x in m]
 
-	for part in matches:
-		if len(part) > 1:
-			ingr = ''
+		if len(match) > 1:
 			found = False
 			for descriptor in descriptors:
-				if descriptor in part[1]:
+				if descriptor in match[1]:
 					found = True
-			if not found: 
-				ingr = part[1]
-				parsed_ingredients.append(ingr)
-			else:
-				ingr = part[0]
-				parsed_ingredients.append(ingr)
-		else:
-			ingr = part[0]
-			parsed_ingredients.append(ingr)
+					if not found:
+						food = match[1]
+					else:
+						food = match[0]
+				else:
+					food = match[0]
 
-	return quantity, measurement, parsed_ingredients
+		ingredients_data.append((quantity, measurement, food))
+
+	return ingredients_data
 
 
 ingredients_list = scrape_ingredients('https://www.allrecipes.com/recipe/21340/lindas-lasagna/?internalSource=hub%20recipe&referringContentType=search%20results&clickId=cardslot%202')
-extracted_ingredients = getIngredient(ingredients_list)
+extracted_ingredients = get_ingredients_data(ingredients_list)
 print(extracted_ingredients)
 #print(scrape_instructions('https://www.allrecipes.com/recipe/23600/worlds-best-lasagna/?internalSource=streams&referringId=95&referringContentType=recipe%20hub&clickId=st_recipes_mades'))
 
