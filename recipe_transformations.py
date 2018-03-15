@@ -2,6 +2,7 @@ import recipe_scraper, re
 import southAsian
 from makeHealthy import *
 from make_vegetarian import *
+from ingredient_analysis import analyzeIngredients
 # import make_vegetarian, tools_list
 # import makeHealthy, southAsian, ingredients
 
@@ -34,4 +35,8 @@ elif transformation_type == 2:
 elif transformation_type == 3:
 	southAsian.makeSouthAsian(ingredients_list, instructions_list, url)
 
-
+# analyzes original recipe and dumps into json file
+analysis_res = analyzeIngredients(recipe_url)
+with open('data.json', 'w') as outfile:
+	for i in analysis_res:
+		json.dump(i, outfile)

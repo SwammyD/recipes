@@ -122,7 +122,7 @@ def get_ingredients_data(ingredients):
 
 
 
-def ingredient_analysis(start_url):
+def analyzeIngredients(start_url):
 	analysis_res = []
 	ingredients_list = scrape_ingredients(start_url)
 	recipe_list = scrape_instructions(start_url)
@@ -144,13 +144,10 @@ def ingredient_analysis(start_url):
 	return analysis_res
 
 
-start_url = 'https://www.allrecipes.com/recipe/23600/worlds-best-lasagna/?internalSource=previously%20viewed&referringContentType=home%20page&clickId=cardslot%203'
-analysis_res = ingredient_analysis(start_url)
+# start_url = 'https://www.allrecipes.com/recipe/23600/worlds-best-lasagna/?internalSource=previously%20viewed&referringContentType=home%20page&clickId=cardslot%203'
+# analysis_res = ingredient_analysis(start_url)
 
 
 
-with open('data.json', 'w') as outfile:
-	for i in analysis_res:
-		print(i)
-		json.dump(i, outfile)
+
 
