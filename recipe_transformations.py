@@ -1,4 +1,9 @@
 import recipe_scraper, re
+import southAsian
+from makeHealthy import *
+from make_vegetarian import *
+# import make_vegetarian, tools_list
+# import makeHealthy, southAsian, ingredients
 
 # input recipe url
 url = 'https://www.allrecipes.com/recipe/23600/worlds-best-lasagna/?internalSource=streams&referringId=95&referringContentType=recipe%20hub&clickId=st_recipes_mades'
@@ -6,24 +11,27 @@ url = 'https://www.allrecipes.com/recipe/23600/worlds-best-lasagna/?internalSour
 ingredients_list = recipe_scraper.scrape_ingredients(url)
 instructions_list = recipe_scraper.scrape_instructions(url)
 
+print("Transformation options:")
+print("1: To and from vegetarian")
+print("2: To and from healthy")
+print("3: To south asian")
+transformation_type = int(input("Please select your transformation type: "))
+recipe_url = input("Please input your recipe url: ")
 
-def makeVegetarian(ingredients):
+ingredients_list = recipe_scraper.scrape_ingredients(str(recipe_url))
+instructions_list = recipe_scraper.scrape_instructions(str(recipe_url))
 
-    meat_keywords = ['beef', 'pork', 'chicken', 'turkey', 'quail' 'ham', 'veal', 'lamb', 'mutton', 'sausage', 'duck']
+if transformation_type == 1:
+	makeVegetarian(recipe_url)
+elif transformation_type == 2:
+	healthy_type = int(input("Please select either healthy (1) or unhealthy (2): "))
+	if healthy_type == 1:
+		makeHealthyIngredients(recipe_url)
+		makeHealthyRecipe(recipe_url)
+	elif healthy_type == 2: 
+		makeUnhealthyIngredients(recipe_url)
+		makeUnhealthyRecipe(recipe_url)
+elif transformation_type == 3:
+	southAsian.makeSouthAsian(ingredients_list, instructions_list, url)
 
-    # search thru ingredients and replace any meat with tofu
-    # TODO: update cooking methods in instructions
-    # TODO: edit adjectives and measurements?
-    for i in range(len(ingredients)):
-        for meat in meat_keywords:
-            if meat in ingredients[i]:
-                ingredients[i] = re.sub(meat, 'tofu', ingredients[i])
-                print("here")
-
-    return ingredients
-
-veg_ingredients = makeVegetarian(ingredients_list)
-
-print(veg_ingredients)
-print(instructions_list)
 
