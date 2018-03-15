@@ -1,8 +1,8 @@
 from recipe_scraper import *
 from fractions import Fraction
-from ingredients_for_health import *
 
-recipe = 'https://www.allrecipes.com/recipe/23600/worlds-best-lasagna/?internalSource=streams&referringId=95&referringContentType=recipe%20hub&clickId=st_recipes_mades'
+
+#recipe = 'https://www.allrecipes.com/recipe/23600/worlds-best-lasagna/?internalSource=streams&referringId=95&referringContentType=recipe%20hub&clickId=st_recipes_mades'
 
 
 fats = [
@@ -67,7 +67,27 @@ def makeHealthyIngredients( recipe ):
 				ingredient[2] = carb[1]
 				ingredients[n] = ingredient
 	reduceProportions(ingredients)
-	print(ingredients)
+	
+	print("ingredients:")
+	
+	for ingr in ingredients:
+		ingr_str = ''
+		for item in ingr:
+			if type(item) is list:
+				if item != []:
+					if ingr_str == '':
+						ingr_str = ''.join(item)
+					else:
+						ingr_str = ingr_str + ' ' + ' '.join(item)
+			elif type(item) is int or float:
+				ingr_str = ingr_str + ' ' + str(item)
+			else:
+				if ingr_str == '':
+					ingr_str = item
+				else:
+					ingr_str = ingr_str + ' ' + item
+
+		print(ingr_str)
 
 #DONE
 def makeHealthyRecipe( recipe ):
@@ -84,7 +104,7 @@ def makeHealthyRecipe( recipe ):
 				step = step.replace(carb[0], carb[1])
 				instructions[n] = step
 
-	print(recipe)
+	print(instructions)
 
 #DONE
 def reduceProportions( ingredients ):
@@ -110,7 +130,27 @@ def makeUnhealthyIngredients( recipe ):
 			if carb[1] in ingredient[2]:
 				ingredient[2] = carb[0]
 				ingredients[n] = ingredient
-	print(ingredients)
+	
+	print("ingredients:")
+	
+	for ingr in ingredients:
+		ingr_str = ''
+		for item in ingr:
+			if type(item) is list:
+				if item != []:
+					if ingr_str == '':
+						ingr_str = ''.join(item)
+					else:
+						ingr_str = ingr_str + ' ' + ' '.join(item)
+			elif type(item) is int or float:
+				ingr_str = ingr_str + ' ' + str(item)
+			else:
+				if ingr_str == '':
+					ingr_str = item
+				else:
+					ingr_str = ingr_str + ' ' + item
+
+		print(ingr_str)
 
 #DONE
 def makeUnhealthyRecipe( recipe ):
@@ -126,6 +166,5 @@ def makeUnhealthyRecipe( recipe ):
 			if carb[1] in step:
 				step = step.replace(carb[1], carb[0])
 				instructions[n] = step
-	print(recipe)
+	print(instructions)
 
-makeHealthyIngredients(recipe)
