@@ -37,6 +37,7 @@ def scrape_ingredients(recipe_url):
 		ingredient_list.append(text)
 	return ingredient_list
 
+
 def scrape_instructions(recipe_url):
 	my_url = recipe_url
 
@@ -104,12 +105,12 @@ def get_ingredients_data(ingredients):
 			for descriptor in descriptors:
 				if descriptor in match[1]:
 					found = True
-			if not found:
-				food = match[1]
-			else:
-				food = match[0]
-		else:
-			food = match[0]
+					if not found:
+						food = match[1]
+					else:
+						food = match[0]
+				else:
+					food = match[0]
 
 		ingredients_data.append([quantity, measurement, food])
 
