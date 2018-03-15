@@ -14,6 +14,36 @@ descriptors = [
 	'diced'
 ]
 
+
+primary_methods = {
+	'drain': 'boiling',
+	'bake': 'baking',
+	'baking': 'baking',
+	'simmer': 'simmering',
+	'simmering': 'simmering',
+	'bring': 'boiling',
+	'caramelize': 'caramelizing',
+	'whisk': 'beating',
+	'blend': 'blending',
+	'saute': 'sauteing',
+	'slow': 'slow cook',
+	'pressure': 'pressure cook'
+ }
+ 
+secondary_methods = {
+	   'whisk': 'beating',
+	   'blend': 'blending',
+	   'chop ': 'chopping',
+	   'grat': 'grating',
+	   'stir': 'stirring',
+	   'shake' : 'shaking',
+	   'mince ' : 'mincing',
+	   'crush' : 'crushing',
+	   'squeeze' : 'squeezing',
+}
+
+
+
 def scrape_ingredients(recipe_url):
 	# url of award show wiki page
 	my_url = recipe_url
@@ -115,6 +145,28 @@ def get_ingredients_data(ingredients):
 		ingredients_data.append([quantity, measurement, food])
 
 	return ingredients_data
+
+
+def extractMethods(recipe):
+	methods_list = []
+	primary_methods_list = []
+	secondary_methods_list = []
+
+	for step in recipe: 
+		words = step.split()
+		for word in words:
+			stripped_word = word.replace(',', '')
+			stripped_word = stripped_word.replace('.', '')
+
+			if stripped_word.lower() in primary_methods:
+				primary_methods_list.append(primary_methods[stripped_word.lower()])
+			if stripped_word.lower() in secondary_methods:
+				secondary_methods_list.append(secondary_methods[stripped_word.lower()])
+	return set(primary_methods_list), set(secondary_methods_list)
+
+
+recipe_list = scrape_instructions('https://www.allrecipes.com/recipe/21340/lindas-lasagna/?internalSource=hub%20recipe&referringContentType=search%20results&clickId=cardslot%202')
+print(extractMethods(recipe_list))
 
 
 ingredients_list = scrape_ingredients('https://www.allrecipes.com/recipe/21340/lindas-lasagna/?internalSource=hub%20recipe&referringContentType=search%20results&clickId=cardslot%202')
