@@ -68,7 +68,7 @@ def get_ingredients_data(ingredients):
 	ingredients_data = []
 
 	for words in ingredients:
-		quantity = []
+		quantity = 0
 		measurement = []
 		food = ''
 
@@ -83,7 +83,8 @@ def get_ingredients_data(ingredients):
 		for word in words_list:
 			# if it's a quantity
 			if re.search('[1-9]', word) or re.search('[1-9]\/[1-9]', word) or re.search('\([1-9]+ [a-z]+\)', word):
-				quantity.append(word)
+				num = eval(word)
+				quantity += num
 			# if it's a measure
 			elif word in ['teaspoon', 'teaspoons', 'cup', 'cups', 'ounce', 'ounces', 'clove', 'pound', 'tablespoons', 'container', 'package', 'tablespoon', 'bunch', 'can', 'cans', 'pounds']:
 				measurement.append(word)

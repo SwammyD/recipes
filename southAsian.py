@@ -162,7 +162,6 @@ def extractMethods(recipe):
 
 print(extractMethods(recipe_list))
 
-
 ingredients_data = recipe_scraper.get_ingredients_data(ingredients_list)
 #print(extracted_ingredients)
 print(makeSouthAsian(ingredients_data, recipe_list))
