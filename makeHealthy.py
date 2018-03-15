@@ -2,10 +2,8 @@ from recipe_scraper import *
 from fractions import Fraction
 from ingredients_for_health import *
 
-full_ingredients = scrape_ingredients('https://www.allrecipes.com/recipe/23600/worlds-best-lasagna/?internalSource=streams&referringId=95&referringContentType=recipe%20hub&clickId=st_recipes_mades')
-recipe = scrape_instructions('https://www.allrecipes.com/recipe/23600/worlds-best-lasagna/?internalSource=streams&referringId=95&referringContentType=recipe%20hub&clickId=st_recipes_mades')
+#recipe = 'https://www.allrecipes.com/recipe/23600/worlds-best-lasagna/?internalSource=streams&referringId=95&referringContentType=recipe%20hub&clickId=st_recipes_mades'
 
-quantity, measurement, ingredients = decompose_ingredient('https://www.allrecipes.com/recipe/13883/manicotti/?internalSource=rotd&referringId=95&referringContentType=recipe%20hub')
 
 fats = [
 
@@ -50,69 +48,82 @@ carbs = [
 
 
 
-# this will need to be changed based on how we define the recipe, 
-# but the basic logic should remain the same
-def makeHealthyIngredients( ingredients ):
+# DONE
+def makeHealthyIngredients( recipe ):
+	full_ingredients = scrape_ingredients(recipe)
+	ingredients = get_ingredients_data(full_ingredients)
 	for fat in fats:
 		for n, ingredient in enumerate(ingredients):
-			if 'cheese' in ingredient and 'low-fat' not in ingredient:
-				ingredient = 'low-fat' + ingredient
+			if 'cheese' in ingredient[2] and 'low-fat' not in ingredient[2]:
+				ingredient[2] = 'low-fat ' + ingredient[2]
 				ingredients[n] = ingredient
-			elif fat[0] in ingredient and 'lean' not in ingredient:
-				ingredient = fat[1]
+			elif fat[0] in ingredient[2] and 'lean' not in ingredient[2]:
+				ingredient[2] = fat[1]
 				ingredients[n] = ingredient
 
 	for carb in carbs:
 		for n, ingredient in enumerate(ingredients):
-			if carb[0] in ingredient:
-				ingredient = carb[1]
+			if carb[0] in ingredient[2]:
+				ingredient[2] = carb[1]
 				ingredients[n] = ingredient
-	#print(ingredients)
+	reduceProportions(ingredients)
+	print(ingredients)
 
+#DONE
 def makeHealthyRecipe( recipe ):
+	instructions = scrape_instructions(recipe)
 	for fat in fats:
-		if fat[0] in recipe:
-			recipe = recipe.replace(fat[0], fat[1])
+		for x, step in enumerate(instructions):
+			if fat[0] in step and 'lean ground' not in step:
+				step = step.replace(fat[0], fat[1])
+				instructions[x] = step
 
 	for carb in carbs:
-		if carb[0] in recipe:
-			recipe = recipe.replace(carb[0], carb[1])
+		for n, step in enumerate(instructions):
+			if carb[0] in step:
+				step = step.replace(carb[0], carb[1])
+				instructions[n] = step
 
-	#print(recipe)
+	print(recipe)
 
+#DONE
 def reduceProportions( ingredients ):
 	for x, ingredient in enumerate(ingredients):
-		if 'sugar' in ingredient or 'salt' in ingredient:
-			new_amt = float(Fraction(ingredient.split()[0])/2)
-			for y, word in enumerate(ingredient.split()):
-				if y == 0:
-					ingredient = ingredient.replace(word, str(new_amt))
-					ingredients[x] = ingredient
+		if 'sugar' in ingredient[2] or 'salt' in ingredient[2]:
+			new_amt = ingredient[0]/2
+			ingredient[0] = new_amt
+			ingredients[x] = ingredient
 	#print(ingredients)
 
-def makeUnhealthyIngredients( ingredients ):
+#DONE
+def makeUnhealthyIngredients( recipe ):
+	full_ingredients = scrape_ingredients(recipe)
+	ingredients = get_ingredients_data(full_ingredients)
 	for fat in fats:
 		for n, ingredient in enumerate(ingredients):
-			if fat[1] in word:
-				ingredient = fat[0]
+			if fat[1] in ingredient[2]:
+				ingredient[2] = fat[0]
 				ingredients[n] = ingredient
 
 	for carb in carbs:
 		for n, ingredient in enumerate(ingredients):
-			if carb[1] in word:
-				ingredient = ingredient.replace(word, carb[0])
+			if carb[1] in ingredient[2]:
+				ingredient[2] = carb[0]
 				ingredients[n] = ingredient
 
+#DONE
 def makeUnhealthyRecipe( recipe ):
+	instructions = scrape_instructions(recipe)
 	for fat in fats:
-		if fat[1] in word:
-			recipe = recipe.replace(fat[1], fat[0])
+		for x, step in enumerate(instructions):
+			if fat[1] in step:
+				step = step.replace(fat[1], fat[0])
+				instructions[x] = step
 
 	for carb in carbs:
-		if carb[1] in word:
-			recipe = recipe.replace(carb[1], carb[0])
+		for n, step in enumerate(instructions):
+			if carb[1] in step:
+				step = step.replace(carb[1], carb[0])
+				instructions[n] = step
 
-makeHealthyIngredients(ingredients)
-makeHealthyRecipe(recipe)
-reduceProportions(full_ingredients)
-# quantities do not break down fractions properly
+makeHealthyIngredients(recipe)
