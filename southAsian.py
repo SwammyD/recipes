@@ -1,4 +1,11 @@
 import recipe_scraper, re
+from nltk import *
+from textblob import TextBlob
+import os
+from stanfordcorenlp import StanfordCoreNLP
+
+
+
 
 urls = [
 	['https://www.allrecipes.com/recipe/21340/lindas-lasagna/?internalSource=hub%20recipe&referringContentType=search%20results&clickId=cardslot%202'],
@@ -12,9 +19,9 @@ urls = [
 	['https://www.allrecipes.com/recipe/255865/slow-cooker-thai-curried-beef/?internalSource=staff%20pick&referringId=92&referringContentType=recipe%20hub']
 ]
 
-my_url = urls[4][0]
-ingredients_list = recipe_scraper.scrape_ingredients(my_url)
-recipe_list = recipe_scraper.scrape_instructions(my_url)
+#my_url = urls[4][0]
+# ingredients_list = recipe_scraper.scrape_ingredients(my_url)
+# recipe_list = recipe_scraper.scrape_instructions(my_url)
 
 
 
@@ -50,7 +57,7 @@ substitutions = {
 	'fresh basil leaves': 'fresh cilantro leaves'
 }
 
-primary_methods = {
+methods = {
 	'drain': 'boiling',
 	'bake': 'baking',
 	'baking': 'baking',
@@ -58,21 +65,11 @@ primary_methods = {
 	'simmering': 'simmering',
 	'bring': 'boiling',
 	'caramelize': 'caramelizing',
+	'whisk': 'beating',
+	'blend': 'blending',
 	'saute': 'sauteing',
 	'slow': 'slow cook',
 	'pressure': 'pressure cook'
-}
-
-secondary_methods = {
-       'whisk': 'beating',
-       'blend': 'blending',
-       'chop ': 'chopping',
-       'grat': 'grating',
-       'stir': 'stirring',
-       'shake' : 'shaking',
-       'mince ' : 'mincing',
-       'crush' : 'crushing',
-       'squeeze' : 'squeezing',
 }
 
 descriptors = [
@@ -86,18 +83,23 @@ descriptors = [
 ]
 
 
-def makeSouthAsian(ingredients, recipe):
+def makeSouthAsian(ingredients, recipe, url):
+	my_url = url
+	# ingredients_list = recipe_scraper.scrape_ingredients(my_url)
+	# recipe_list = recipe_scraper.scrape_instructions(my_url)
+
+	ingredients_data = recipe_scraper.get_ingredients_data(ingredients)
+
 	swaps = {}
 	new_recipe = recipe
 
 	for n, ingredient in enumerate(ingredients_data):
 		curr_food = ingredient[2]
 
-		for key, value in substitutions.items():
-			if key in curr_food:
-				# tuples don't support item assignment, we could either pop the tuple or represent ings with a list of lists
-				ingredients_data[n][2] = value
-				swaps[key] = value
+		if curr_food in substitutions:
+			ingredients_data[n][2] = substitutions[curr_food]
+			swaps[curr_food] = substitutions[curr_food]
+
 
 	# for n, ingredient in enumerate(ingredients):
 	# 	ingredient = ingredient.lower()
@@ -110,8 +112,8 @@ def makeSouthAsian(ingredients, recipe):
 			split_item = item.split()
 			if len(split_item) > 1:
 				without_first = ' '.join(split_item[1:])
-			else:
-				without_first = ''
+			else: 
+				without_first = split_item
 			last_word = split_item[-1]
 			first_word = split_item[0]
 
@@ -135,9 +137,35 @@ def makeSouthAsian(ingredients, recipe):
 
 		new_recipe[n] = step
 
-	# print(new_recipe)
 
-	return ingredients_data, new_recipe
+	print("ingredients:")
+	
+	for ingr in ingredients_data:
+		ingr_str = ''
+		for item in ingr:
+			if type(item) is list:
+				if item != []:
+					if ingr_str == '':
+						ingr_str = ''.join(item)
+					else:
+						ingr_str = ingr_str + ' ' + ' '.join(item)
+			elif type(item) is int or float:
+				ingr_str = ingr_str + ' ' + str(item)
+			else:
+				if ingr_str == '':
+					ingr_str = item
+				else:
+					ingr_str = ingr_str + ' ' + item
+
+		print(ingr_str)
+
+	print("\n")
+	print("recipe:")
+
+	for step in new_recipe:
+		print(step)
+
+
 
 
 
@@ -145,35 +173,24 @@ def makeSouthAsian(ingredients, recipe):
 
 
 def extractMethods(recipe):
-	primary_methods_list = []
-	secondary_methods_list = []
+	methods_list = []
 
 	for step in recipe:
 		words = step.split()
 		for word in words:
 			stripped_word = word.replace(',', '')
 			stripped_word = stripped_word.replace('.', '')
-			if stripped_word.lower() in primary_methods:
-				primary_methods_list.append(primary_methods[stripped_word.lower()])
-			if stripped_word.lower() in secondary_methods:
-				secondary_methods_list.append(secondary_methods[stripped_word.lower()])
+			if stripped_word.lower() in methods:
+				methods_list.append(methods[stripped_word.lower()])
 
-	return set(primary_methods_list), set(secondary_methods_list)
-
-print(extractMethods(recipe_list))
-
-ingredients_data = recipe_scraper.get_ingredients_data(ingredients_list)
-#print(extracted_ingredients)
-print(makeSouthAsian(ingredients_data, recipe_list))
+	return methods_list
 
 
+# print(extractMethods(recipe_list))
 
-#depreciated version of Stanford POS tagger - might be useful
+# recipe_url = 'https://www.allrecipes.com/recipe/23600/worlds-best-lasagna/?internalSource=streams&referringId=95&referringContentType=recipe%20hub&clickId=st_recipes_mades'
+# ingredients_list = recipe_scraper.scrape_ingredients(str(recipe_url))
+# instructions_list = recipe_scraper.scrape_instructions(str(recipe_url))
+# # #print(extracted_ingredients)
+# makeSouthAsian(ingredients_list, instructions_list, recipe_url)
 
-# stanford_classifier = 'C:\StanfordPOS\stanford-postagger-2018-02-27\models\english-bidirectional-distsim.tagger'
-# stanford_ner_path = 'C:\StanfordPOS\stanford-postagger-2018-02-27\stanford-postagger.jar'
-# st = StanfordPOSTagger(stanford_classifier, stanford_ner_path, encoding='utf-8')
-
-# text = word_tokenize(recipe_list[4])
-# classified = st.tag(text)
-# print(classified)
