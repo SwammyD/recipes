@@ -43,7 +43,7 @@ def decompose_ingredient(start_url):
             for word in words_list:
                 if re.search('[1-9]', word) or re.search('[1-9]\/[1-9]', word) or re.search('\([1-9]+ [a-z]+\)', word):
                     quantity.append(word)
-                elif word in ['teaspoon', 'teaspoons', 'cup', 'cups', 'pound', 'tablespoon', 'tablespoons']:
+                elif word in ['teaspoon', 'teaspoons', 'cup', 'cups', 'pound', 'pounds', 'tablespoon', 'tablespoons']:
                     measurement.append(word)
                 else:
                     food = food + ' ' +  word

@@ -7,9 +7,6 @@ full_ingredients = scrape_ingredients('https://www.allrecipes.com/recipe/23600/w
 recipe = scrape_instructions('https://www.allrecipes.com/recipe/23600/worlds-best-lasagna/?internalSource=streams&referringId=95&referringContentType=recipe%20hub&clickId=st_recipes_mades')
 
 quantity, measurement, ingredients = decompose_ingredient('https://www.allrecipes.com/recipe/13883/manicotti/?internalSource=rotd&referringId=95&referringContentType=recipe%20hub')
-print(len(quantity))
-print(len(ingredients))
-#print(recipe)
 
 fats = [
 
@@ -71,20 +68,16 @@ def makeHealthyIngredients( ingredients ):
 			if carb[0] in ingredient:
 				ingredient = carb[1]
 				ingredients[n] = ingredient
-
-	#reduceProportions(ingredients)
 	print(ingredients)
 
 def makeHealthyRecipe( recipe ):
 	for fat in fats:
-		for word in recipe.split():
-			if fat[0] in word:
-				recipe = recipe.replace(word, fat[1])
+		if fat[0] in recipe:
+			recipe = recipe.replace(fat[0], fat[1])
 
 	for carb in carbs:
-		for word in recipe.split():
-			if carb[0] in word:
-				recipe = recipe.replace(word, carb[1])
+		if carb[0] in recipe:
+			recipe = recipe.replace(carb[0], carb[1])
 
 	#print(recipe)
 
@@ -113,14 +106,12 @@ def makeUnhealthyIngredients( ingredients ):
 
 def makeUnhealthyRecipe( recipe ):
 	for fat in fats:
-		for word in recipe.split():
-			if fat[1] in word:
-				recipe = recipe.replace(word, fat[0])
+		if fat[1] in word:
+			recipe = recipe.replace(fat[1], fat[0])
 
 	for carb in carbs:
-		for word in recipe.split():
-			if carb[1] in word:
-				recipe = recipe.replace(word, carb[0])
+		if carb[1] in word:
+			recipe = recipe.replace(carb[1], carb[0])
 
 makeHealthyIngredients(ingredients)
 # quantities do not break down fractions properly
