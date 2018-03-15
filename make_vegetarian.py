@@ -1,8 +1,5 @@
 from recipe_scraper import *
 
-ingredients = scrape_ingredients('https://www.allrecipes.com/recipe/23600/worlds-best-lasagna/?internalSource=streams&referringId=95&referringContentType=recipe%20hub&clickId=st_recipes_mades')
-recipe = scrape_instructions('https://www.allrecipes.com/recipe/23600/worlds-best-lasagna/?internalSource=streams&referringId=95&referringContentType=recipe%20hub&clickId=st_recipes_mades')
-
 # if we find one of these things, I want to replace just the food part of the ingredient (quantiy, measurement, food)
 # maybe add keywords for if the quanitity won't work for the substitue (e.g. one chicken)
 
@@ -29,7 +26,12 @@ subs = {
 #special case: fish products (fish sauce, fish paste) just change to "vegan fish _____ substitute"
 # fish_product_sub = [('fish'), '']
 
-def make_vegetarian(ingredients_data, recipe):
+def makeVegetarian(url):
+	my_url = url
+
+	ingredients = scrape_ingredients(url)
+	recipe = scrape_instructions(url)
+	ingredients_data = get_ingredients_data(ingredients)
 	# the actual swaps we make
 	swaps = {}
 
@@ -79,7 +81,31 @@ def make_vegetarian(ingredients_data, recipe):
 
 			recipe[n] = step
 
-	return ingredients_data, recipe
+	
 
-ingredients_data = get_ingredients_data(ingredients)
-print(make_vegetarian(ingredients_data, recipe))
+	print("ingredients:")
+	
+	for ingr in ingredients_data:
+		ingr_str = ''
+		for item in ingr:
+			if type(item) is list:
+				if item != []:
+					if ingr_str == '':
+						ingr_str = ''.join(item)
+					else:
+						ingr_str = ingr_str + ' ' + ' '.join(item)
+			elif type(item) is int or float:
+				ingr_str = ingr_str + ' ' + str(item)
+			else:
+				if ingr_str == '':
+					ingr_str = item
+				else:
+					ingr_str = ingr_str + ' ' + item
+
+		print(ingr_str)
+
+	print("\n")
+	print("recipe:")
+
+	for step in recipe:
+		print(step)
