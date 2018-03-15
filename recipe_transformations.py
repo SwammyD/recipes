@@ -6,6 +6,7 @@ url = 'https://www.allrecipes.com/recipe/23600/worlds-best-lasagna/?internalSour
 ingredients_list = recipe_scraper.scrape_ingredients(url)
 instructions_list = recipe_scraper.scrape_instructions(url)
 
+
 def makeVegetarian(ingredients):
 
     meat_keywords = ['beef', 'pork', 'chicken', 'turkey', 'quail' 'ham', 'veal', 'lamb', 'mutton', 'sausage', 'duck']
@@ -25,3 +26,4 @@ veg_ingredients = makeVegetarian(ingredients_list)
 
 print(veg_ingredients)
 print(instructions_list)
+
