@@ -110,6 +110,7 @@ def makeUnhealthyIngredients( recipe ):
 			if carb[1] in ingredient[2]:
 				ingredient[2] = carb[0]
 				ingredients[n] = ingredient
+	print(ingredients)
 
 #DONE
 def makeUnhealthyRecipe( recipe ):
@@ -125,5 +126,6 @@ def makeUnhealthyRecipe( recipe ):
 			if carb[1] in step:
 				step = step.replace(carb[1], carb[0])
 				instructions[n] = step
+	print(recipe)
 
 makeHealthyIngredients(recipe)
