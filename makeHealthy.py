@@ -2,7 +2,7 @@ from recipe_scraper import *
 from fractions import Fraction
 from ingredients_for_health import *
 
-#recipe = 'https://www.allrecipes.com/recipe/23600/worlds-best-lasagna/?internalSource=streams&referringId=95&referringContentType=recipe%20hub&clickId=st_recipes_mades'
+recipe = 'https://www.allrecipes.com/recipe/23600/worlds-best-lasagna/?internalSource=streams&referringId=95&referringContentType=recipe%20hub&clickId=st_recipes_mades'
 
 
 fats = [
@@ -23,7 +23,7 @@ fats = [
 	['flour', 'whole wheat flour'],
 	['bacon', 'canadian bacon'],
 	['ground sausage', 'ground turkey'],
-	['sausage', 'lean ham'],
+	['sausage', 'turkey sausage'],
 	['eggs', 'egg substitutes'], # unless baking
 
 ]
