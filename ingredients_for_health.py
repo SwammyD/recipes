@@ -30,7 +30,15 @@ def ingredients_data(start_url):
     return data
 
 
-
+'''
+if re.search('\(', words):
+    print(words)
+    # get rid of trademark
+        words = re.sub('\(R\)', '', words)
+        # get rid of other parentheses
+        words = re.sub(r'\s\([^)]*\)', '', words)
+        print(words)
+'''
 def decompose_ingredient(start_url):
     food = ''
     quantity = []
@@ -39,6 +47,10 @@ def decompose_ingredient(start_url):
     data = ingredients_data(start_url)
     for i in data:
         for words in i[2]:
+            if re.search('\(', words):
+                words = re.sub('\(R\)', '', words)
+                #get rid of other parens
+                words = re.sub(r'\s\([^)]*\)', '', words)
             words_list = words.split()
             for word in words_list:
                 if re.search('[1-9]', word) or re.search('[1-9]\/[1-9]', word) or re.search('\([1-9]+ [a-z]+\)', word):

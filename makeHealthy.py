@@ -1,4 +1,3 @@
-import nltk
 from recipe_scraper import *
 from fractions import Fraction
 from ingredients_for_health import *
@@ -68,7 +67,7 @@ def makeHealthyIngredients( ingredients ):
 			if carb[0] in ingredient:
 				ingredient = carb[1]
 				ingredients[n] = ingredient
-	print(ingredients)
+	#print(ingredients)
 
 def makeHealthyRecipe( recipe ):
 	for fat in fats:
@@ -114,4 +113,6 @@ def makeUnhealthyRecipe( recipe ):
 			recipe = recipe.replace(carb[1], carb[0])
 
 makeHealthyIngredients(ingredients)
+makeHealthyRecipe(recipe)
+reduceProportions(full_ingredients)
 # quantities do not break down fractions properly
