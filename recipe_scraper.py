@@ -89,7 +89,10 @@ def get_ingredients_data(ingredients):
 				measurement.append(word)
 			# otherwise it's part of food so create a string that has the entire food part of the ingredient
 			else:
-				food += ' ' + word
+				if food == '':
+					food += word
+				else:
+					food += ' ' + word
 
 		# now we have a string of the food part of the ingredient. let's take out stuff we don't need
 		m = re.findall(r"((\w+ ?-?)+)", food)
@@ -114,7 +117,7 @@ def get_ingredients_data(ingredients):
 
 ingredients_list = scrape_ingredients('https://www.allrecipes.com/recipe/21340/lindas-lasagna/?internalSource=hub%20recipe&referringContentType=search%20results&clickId=cardslot%202')
 extracted_ingredients = get_ingredients_data(ingredients_list)
-print(extracted_ingredients)
+# print(extracted_ingredients)
 #print(scrape_instructions('https://www.allrecipes.com/recipe/23600/worlds-best-lasagna/?internalSource=streams&referringId=95&referringContentType=recipe%20hub&clickId=st_recipes_mades'))
 
 

@@ -90,17 +90,28 @@ def makeSouthAsian(ingredients, recipe):
 	swaps = {}
 	new_recipe = recipe
 
-	for n, ingredient in enumerate(ingredients):
-		ingredient = ingredient.lower()
-		if ingredient in substitutions:
-			ingredients[n] = substitutions[ingredient]
-			swaps[ingredient] = substitutions[ingredient]
+	for n, ingredient in enumerate(ingredients_data):
+		curr_food = ingredient[2]
+
+		for key, value in substitutions.items():
+			if key in curr_food:
+				# tuples don't support item assignment, we could either pop the tuple or represent ings with a list of lists
+				ingredients_data[n][2] = value
+				swaps[key] = value
+
+	# for n, ingredient in enumerate(ingredients):
+	# 	ingredient = ingredient.lower()
+	# 	if ingredient in substitutions:
+	# 		ingredients[n] = substitutions[ingredient]
+	# 		swaps[ingredient] = substitutions[ingredient]
 
 	for n, step in enumerate(new_recipe):
 		for item in swaps:
 			split_item = item.split()
 			if len(split_item) > 1:
 				without_first = ' '.join(split_item[1:])
+			else: 
+				without_first = ''
 			last_word = split_item[-1]
 			first_word = split_item[0]
 
@@ -110,7 +121,7 @@ def makeSouthAsian(ingredients, recipe):
 				step = re.sub(item, swaps[item], step)
 
 			# check if all but first word is in step
-			elif re.search(without_first, step):
+			elif re.search(without_first, step) and without_first != '':
 				step = re.sub(without_first, swaps[item], step)
 
 			# check if last word is in step
@@ -126,7 +137,7 @@ def makeSouthAsian(ingredients, recipe):
 
 	# print(new_recipe)
 
-	return ingredients, new_recipe
+	return ingredients_data, new_recipe
 
 
 
@@ -158,10 +169,9 @@ def extractMethods(recipe):
 print(extractMethods(recipe_list))
 
 
-
-quantity, measurement, extracted_ingredients = recipe_scraper.getIngredient(ingredients_list)
+ingredients_data = recipe_scraper.get_ingredients_data(ingredients_list)
 #print(extracted_ingredients)
-print(makeSouthAsian(extracted_ingredients, recipe_list))
+print(makeSouthAsian(ingredients_data, recipe_list))
 
 
 
