@@ -23,8 +23,8 @@ subs = {
 	'mutton' : 'tofu',
 	'sausage' : 'tofu',
 	'duck' : 'tofu',
-	'gelatin' : 'agar agar'
-}
+	'gelatin' : 'agar agar',
+ }
 
 #special case: fish products (fish sauce, fish paste) just change to "vegan fish _____ substitute"
 # fish_product_sub = [('fish'), '']
@@ -42,6 +42,37 @@ def make_vegetarian(ingredients_data, recipe):
 				# tuples don't support item assignment, we could either pop the tuple or represent ings with a list of lists
 				ingredients_data[n][2] = value
 				swaps[key] = value
+
+
+	# transform recipe
+	for n, step in enumerate(recipe):
+		for item in swaps:
+			# how are they doing it without this
+			without_first = None
+			split_item = item.split()
+			if len(split_item) > 1:
+				without_first = ' '.join(split_item[1:])
+			last_word = split_item[-1]
+			first_word = split_item[0]
+
+			# check if entire item is in step
+			re_obj = re.search(item, step)
+			if re_obj:
+				step = re.sub(item, swaps[item], step)
+
+			# check if all but first word is in step
+			elif without_first != None and re.search(without_first, step):
+				step = re.sub(without_first, swaps[item], step)
+
+			# check if last word is in step
+			elif re.search(last_word, step):
+				step = re.sub(last_word, swaps[item], step)
+
+			elif (len(split_item) < 3):
+				if re.search(first_word, step):
+					step = re.sub(first_word, swaps[item].split()[0], step)
+
+			recipe[n] = step
 
 	return ingredients_data, recipe
 
