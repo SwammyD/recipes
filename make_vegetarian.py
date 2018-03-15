@@ -12,16 +12,16 @@ subs = {
 	'chicken stock' : 'vegetable broth',
 	'beef broth' : 'vegetable broth',
 	'chicken broth' : 'vegetable broth',
-	'beef' : 'tofu',
+	'beef' : 'vegan meat',
 	'pork' : 'tofu',
-	'chicken' : 'tofu',
-	'turkey' : 'tofu',
+	'chicken' : 'vegan chicken',
+	'turkey' : 'vegan turkey',
 	'quail' : 'tofu',
-	'ham' : 'tofu',
+	'ham' : 'tempeh',
 	'veal' : 'tofu',
 	'lamb' : 'tofu',
 	'mutton' : 'tofu',
-	'sausage' : 'tofu',
+	'sausage' : 'vegan sausage',
 	'duck' : 'tofu',
 	'gelatin' : 'agar agar',
  }
@@ -46,6 +46,11 @@ def make_vegetarian(ingredients_data, recipe):
 
 	# transform recipe
 	for n, step in enumerate(recipe):
+
+		#remove the word 'meat' in instructions if it's present
+		if re.search('[M,m]eat', step):
+			step = re.sub('\s?[M,m]eat[.,-]?', '', step)
+
 		for item in swaps:
 			# how are they doing it without this
 			without_first = None
