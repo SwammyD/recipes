@@ -108,7 +108,7 @@ def get_ingredients_data(ingredients):
 				else:
 					food = match[0]
 
-		ingredients_data.append((quantity, measurement, food))
+		ingredients_data.append([quantity, measurement, food])
 
 	return ingredients_data
 
