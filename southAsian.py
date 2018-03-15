@@ -1,14 +1,4 @@
 import recipe_scraper, re
-from nltk import *
-from textblob import TextBlob
-import os
-from stanfordcorenlp import StanfordCoreNLP
-
-
-java_path = "C:/Program Files/Java/jdk1.8.0_151/bin/java.exe"
-os.environ['JAVAHOME'] = java_path
-nlp = StanfordCoreNLP(r'C:\StanfordPOS\stanford-corenlp-full-2018-02-27')
-
 
 urls = [
 	['https://www.allrecipes.com/recipe/21340/lindas-lasagna/?internalSource=hub%20recipe&referringContentType=search%20results&clickId=cardslot%202'],
@@ -60,7 +50,7 @@ substitutions = {
 	'fresh basil leaves': 'fresh cilantro leaves'
 }
 
-methods = {
+primary_methods = {
 	'drain': 'boiling',
 	'bake': 'baking',
 	'baking': 'baking',
@@ -68,11 +58,21 @@ methods = {
 	'simmering': 'simmering',
 	'bring': 'boiling',
 	'caramelize': 'caramelizing',
-	'whisk': 'beating',
-	'blend': 'blending',
 	'saute': 'sauteing',
 	'slow': 'slow cook',
 	'pressure': 'pressure cook'
+}
+
+secondary_methods = {
+       'whisk': 'beating',
+       'blend': 'blending',
+       'chop ': 'chopping',
+       'grat': 'grating',
+       'stir': 'stirring',
+       'shake' : 'shaking',
+       'mince ' : 'mincing',
+       'crush' : 'crushing',
+       'squeeze' : 'squeezing',
 }
 
 descriptors = [
@@ -110,7 +110,7 @@ def makeSouthAsian(ingredients, recipe):
 			split_item = item.split()
 			if len(split_item) > 1:
 				without_first = ' '.join(split_item[1:])
-			else: 
+			else:
 				without_first = ''
 			last_word = split_item[-1]
 			first_word = split_item[0]
@@ -145,26 +145,20 @@ def makeSouthAsian(ingredients, recipe):
 
 
 def extractMethods(recipe):
-	methods_list = []
+	primary_methods_list = []
+	secondary_methods_list = []
 
 	for step in recipe:
-		# tagged_text = nlp.pos_tag(step)
-		# for item in tagged_text:
-		# 	if item[1][0] == 'V':
-		# 		#print(item)
-		# 		lowercase_item = item[0].lower()
-		# 		if lowercase_item in methods:
-		# 			methods_list.append(methods[lowercase_item])
-
 		words = step.split()
 		for word in words:
 			stripped_word = word.replace(',', '')
 			stripped_word = stripped_word.replace('.', '')
-			if stripped_word.lower() in methods:
-				methods_list.append(methods[stripped_word.lower()])
+			if stripped_word.lower() in primary_methods:
+				primary_methods_list.append(primary_methods[stripped_word.lower()])
+			if stripped_word.lower() in secondary_methods:
+				secondary_methods_list.append(secondary_methods[stripped_word.lower()])
 
-	return methods_list
-
+	return set(primary_methods_list), set(secondary_methods_list)
 
 print(extractMethods(recipe_list))
 
