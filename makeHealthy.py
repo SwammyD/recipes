@@ -1,7 +1,7 @@
 import nltk
 from recipe_scraper import *
 from fractions import Fraction
-from ingredients import *
+from ingredients_for_health import *
 
 full_ingredients = scrape_ingredients('https://www.allrecipes.com/recipe/23600/worlds-best-lasagna/?internalSource=streams&referringId=95&referringContentType=recipe%20hub&clickId=st_recipes_mades')
 recipe = scrape_instructions('https://www.allrecipes.com/recipe/23600/worlds-best-lasagna/?internalSource=streams&referringId=95&referringContentType=recipe%20hub&clickId=st_recipes_mades')
