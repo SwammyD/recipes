@@ -1,6 +1,9 @@
+from recipe_scraper import *
+
+#instructions = scrape_instructions()
+
 # basic idea: certain cooking terms will be linked to different tools
 # when a cooking term shows up, we know that the corresponding tool is used
-# TODO: attach cooking methodology to each tool.
 tools = [
 
 	["al dente", "pot"],
@@ -111,19 +114,8 @@ tools = [
 
 ]
 
-#instructions = 'Combine ground beef, onion, bread crumbs, broth, egg, Parmesan cheese, 2 tablespoons ketchup, Worcestershire sauce, Italian seasoning, parsley, and garlic powder in a bowl using your hands. Form into a loaf. Center the loaf in the bottom of a slow cooker, leaving room on the sides. Coat meatloaf with 1/4 cup ketchup and surround with potatoes and carrots. Cook on High, about 2 hours. Reduce heat setting to Low; cook until meatloaf is no longer pink in the center and vegetables are tender, 4 to 6 hours more. An instant-read thermometer inserted into the center should read at least 160 degrees F (70 degrees C).'
-
-instructions = "Preheat oven to 350 degrees F (175 degrees C). Grease and flour a 9x13 inch pan. In a large bowl, beat together eggs, oil, white sugar and 2 teaspoons vanilla. Mix in flour, baking soda, baking powder, salt and cinnamon. Stir in carrots. Fold in pecans. Pour into prepared pan. Bake in the preheated oven for 40 to 50 minutes, or until a toothpick inserted into the center of the cake comes out clean. Let cool in pan for 10 minutes, then turn out onto a wire rack and cool completely. To Make Frosting: In a medium bowl, combine butter, cream cheese, confectioners' sugar and 1 teaspoon vanilla. Beat until the mixture is smooth and creamy. Stir in chopped pecans. Frost the cooled cake."
-
-# stove
-# tongs
-# oven
-# wooden spoon
-# spatula
-# shaker
-# strainer
-
-def makeToolsList( instructions ):
+def makeToolsList( url ):
+	instructions = scrape_instructions(url)
 	toolsList = []
 	for term in tools:
 			if  term[0] in instructions.lower() and term[1] not in toolsList:
@@ -132,6 +124,4 @@ def makeToolsList( instructions ):
 				toolsList.append(term[1])
 	if 'bowl' in toolsList and 'wooden spoon' not in toolsList:
 		toolsList.append('wooden spoon')
-	print(toolsList)
-
-makeToolsList(instructions)
+	print('tools: ', toolsList)
