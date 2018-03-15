@@ -150,7 +150,7 @@ def get_ingredients_data(ingredients):
 def extractMethods(recipe):
 	methods_list = []
 	primary_methods_list = []
-	secondary_methods_list = []
+	secondary_methods_list = ['Secondary methods: ']
 
 	for step in recipe: 
 		words = step.split()
@@ -162,11 +162,13 @@ def extractMethods(recipe):
 				primary_methods_list.append(primary_methods[stripped_word.lower()])
 			if stripped_word.lower() in secondary_methods:
 				secondary_methods_list.append(secondary_methods[stripped_word.lower()])
-	return set(primary_methods_list), set(secondary_methods_list)
+
+	all_methods = list(set(primary_methods_list)), list(set(secondary_methods_list))
+	return list(all_methods)
 
 
 recipe_list = scrape_instructions('https://www.allrecipes.com/recipe/21340/lindas-lasagna/?internalSource=hub%20recipe&referringContentType=search%20results&clickId=cardslot%202')
-print(extractMethods(recipe_list))
+# print(extractMethods(recipe_list))
 
 
 ingredients_list = scrape_ingredients('https://www.allrecipes.com/recipe/21340/lindas-lasagna/?internalSource=hub%20recipe&referringContentType=search%20results&clickId=cardslot%202')

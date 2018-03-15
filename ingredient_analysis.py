@@ -1,6 +1,8 @@
 import bs4
 import json
 import re
+from recipe_scraper import *
+from tools_list import *
 from urllib.request import urlopen as uReq
 from bs4 import BeautifulSoup as soup
 import nltk
@@ -123,7 +125,9 @@ def get_ingredients_data(ingredients):
 def ingredient_analysis(start_url):
 	analysis_res = []
 	ingredients_list = scrape_ingredients(start_url)
+	recipe_list = scrape_instructions(start_url)
 	extracted_ingredients = get_ingredients_data(ingredients_list)
+
 	for ingredient_list in extracted_ingredients:
 		descriptor = []
 		preparation = []
@@ -135,6 +139,8 @@ def ingredient_analysis(start_url):
 			if tag[1] == 'VBN':
 				preparation.append(tag[0])
 		analysis_res.append(['Recipes:', ingredient_list, 'Descriptor:', descriptor, 'Preparation:', preparation])
+	analysis_res.append(['Primary Methods:', extractMethods(recipe_list)])
+	analysis_res.append(['Tools:', makeToolsList(start_url)])
 	return analysis_res
 
 
@@ -147,7 +153,4 @@ with open('data.json', 'w') as outfile:
 	for i in analysis_res:
 		print(i)
 		json.dump(i, outfile)
-
-
-
 

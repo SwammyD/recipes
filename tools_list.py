@@ -118,10 +118,11 @@ def makeToolsList( url ):
 	instructions = scrape_instructions(url)
 	toolsList = []
 	for term in tools:
-			if  term[0] in instructions.lower() and term[1] not in toolsList:
+		for step in instructions: 
+			if  term[0] in step.lower() and term[1] not in toolsList:
 				toolsList.append(term[1])
-			if term[1] in instructions.lower() and term[1] not in toolsList:
+			if term[1] in step.lower() and term[1] not in toolsList:
 				toolsList.append(term[1])
 	if 'bowl' in toolsList and 'wooden spoon' not in toolsList:
 		toolsList.append('wooden spoon')
-	print('tools: ', toolsList)
+	return toolsList
