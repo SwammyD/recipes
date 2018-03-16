@@ -1,0 +1,1 @@
+I worked on the South Asian transformation, recipe scraper, and the final recipe_transformation main file. I also worked on starting off the extract methods function, though Meg was the one who fine-tuned it to be primary and secondary methods. 
