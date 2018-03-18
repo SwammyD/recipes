@@ -1,0 +1,1 @@
+I did the vegetarian transformation, primary & secondary methods (using what Sarah had done to find general methods as a baseline) as well as helping the group with any fires (such as those related to git), organizing and scaffolding the code, and helping with bugs.
